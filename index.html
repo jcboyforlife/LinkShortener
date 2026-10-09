@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Makes the page render properly on mobile devices instead of zoomed-out desktop view -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Shortener</title>
+
+  <!-- We'll link our stylesheet here in Step 2 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================
+       HEADER
+       Contains the app title and the dark/light
+       mode toggle. <header> is semantic: it tells
+       browsers and screen readers "this is the top
+       intro/branding area of the page".
+  ============================================= -->
+  <header class="site-header">
+    <h1>Link Shortener</h1>
+
+    <!-- Dark/light mode toggle button.
+         aria-pressed will be updated by JS (true/false)
+         so screen reader users know the current state. -->
+    <button
+      type="button"
+      id="themev-toggle"
+      class="theme-toggle"
+      aria-pressed="false"
+      aria-label="Toggle dark mode"
+    >
+      🌙
+    </button>
+  </header>
+
+  <!-- ============================================
+       MAIN CONTENT
+       Everything that isn't header/footer chrome
+       lives inside <main>. There should only ever
+       be ONE <main> per page — it's how screen
+       reader users "skip to content".
+  ============================================= -->
+  <main class="app">
+
+    <!-- ----------------------------------------
+         SHORTEN FORM
+         We use a real <form> element (not just a
+         div with a button) because:
+         1. It gives us free "press Enter to submit"
+            behavior — no extra JS needed for that.
+         2. It's more accessible — screen readers and
+            browsers understand <form> semantics.
+         We'll prevent the default page-reload
+         behavior in JavaScript and handle the
+         submission ourselves (since we're calling
+         an API, not submitting to a server backend).
+    ----------------------------------------- -->
+    <form id="shorten-form" class="shorten-form" novalidate>
+      <div class="field-group">
+        <label for="url-input" class="visually-hidden">
+          Enter a URL to shorten
+        </label>
+        <input
+          type="text"
+          id="url-input"
+          name="url"
+          placeholder="Paste a long URL, e.g. https://example.com/page"
+          autocomplete="off"
+          inputmode="url"
+        >
+        <button type="submit" id="shorten-btn" class="shorten-btn">
+          Shorten
+        </button>
+      </div>
+
+      <!-- ----------------------------------------
+           ERROR MESSAGE AREA
+           aria-live="polite" means screen readers
+           will automatically announce new text that
+           appears here, without the user needing to
+           navigate to it manually. Empty by default;
+           JS fills this in when validation fails or
+           the API call errors out.
+      ----------------------------------------- -->
+      <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
+    </form>
+
+    <!-- ----------------------------------------
+         LOADING INDICATOR
+         Hidden by default (we'll control visibility
+         with a CSS class toggled by JS). Shown only
+         while we're waiting on the API response.
+         aria-hidden gets flipped by JS too, so screen
+         readers don't announce it when it's invisible.
+    ----------------------------------------- -->
+    <div id="loading-indicator" class="loading-indicator" hidden aria-hidden="true">
+      <span class="spinner" aria-hidden="true"></span>
+      <span>Shortening your link…</span>
+    </div>
+
+    <!-- ----------------------------------------
+         RESULT CARD
+         Hidden by default. Shown after a successful
+         API response. We use <section> here because
+         this is a distinct, self-contained chunk of
+         content (the result), not just a generic div.
+    ----------------------------------------- -->
+    <section id="result-card" class="result-card" hidden aria-live="polite">
+      <div class="result-row">
+        <p class="result-label">Original URL</p>
+        <p id="original-url" class="original-url"></p>
+      </div>
+
+      <div class="result-row result-row--short">
+        <div>
+          <p class="result-label">Shortened URL</p>
+          <!-- We use an <a> tag (not just text) so the
+               shortened link is actually clickable. -->
+          <a id="short-url" class="short-url" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+
+        <button type="button" id="copy-btn" class="copy-btn">
+          Copy
+        </button>
+      </div>
+
+      <!-- Small "Copied!" confirmation message.
+           Also aria-live so it gets announced. -->
+      <p id="copy-feedback" class="copy-feedback" aria-live="polite"></p>
+    </section>
+
+    <!-- ----------------------------------------
+         HISTORY SECTION
+         Shows previously shortened links, pulled
+         from LocalStorage. We build this out in a
+         later JS step, but the markup lives here
+         from the start.
+    ----------------------------------------- -->
+    <section class="history-section" aria-labelledby="history-heading">
+      <div class="history-header">
+        <h2 id="history-heading">History</h2>
+        <button type="button" id="clear-history-btn" class="clear-history-btn">
+          Clear history
+        </button>
+      </div>
+
+      <!-- <ul> because a list of past links is,
+           semantically, a list. JS will inject
+           <li> items in here. -->
+      <ul id="history-list" class="history-list">
+        <!-- Empty state message, shown when there's no history yet.
+             JS will remove/restore this depending on state. -->
+        <li id="history-empty" class="history-empty">No links shortened yet.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- ============================================
+       FOOTER
+       Small credit/footer area. Optional but nice
+       for a portfolio piece.
+  ============================================= -->
+  <footer class="site-footer">
+    <p>Built as a front-end portfolio project.</p>
+  </footer>
+
+  <!-- Script loaded at the end of body (not in <head>)
+       so the HTML is fully parsed before JS tries to
+       grab elements with getElementById, etc. We'll
+       create this file in a later step. -->
+  <script src="script.js"></script>
+</body>
+</html>
